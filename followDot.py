@@ -11,13 +11,20 @@ def mkdirs(width):
 			os.mkdir('images/400_{0}'.format(i))
 		except OSError:
 			pass
-		i += 50
+		i += frameRate
 
 
 def get_image(camera, name):
+	face_cascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml')
 	retval, im = camera.read()
+	faces = face_cascade.detectMultiScale(im, scaleFactor=1.2, minSize=(20,20))
+	print faces[0]
+	(x,y,w,h) = faces[0]
+ 	cropped = im[y:y+h, x:x+w]
  	_file = "images/" + name + ".png"
- 	cv2.imwrite(_file, im)
+ 	cv2.imwrite(_file, cropped)
+
+
 
 def initializeCamera():
 	camera_port = 0
@@ -53,6 +60,8 @@ def updateScreen(x, y, screen):
 
 width = 800
 height = 800
+frameRate = 50
+
 mkdirs(width)
 
 
@@ -60,20 +69,20 @@ mkdirs(width)
 camera = initializeCamera()
 screen = initializeScreen(width, height)
 
-for i in range(3):
+for i in range(2):
 	timestamp = time.time()
 	x=width/2
 	y=height/2
 
 	while x < width:
 		updateScreen(x, y, screen)
-		if x%50 == 0:
+		if x%frameRate == 0:
 			get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
 		x+=1
 
 	while x >0:
 		updateScreen(x, y, screen)
-		if x%50 == 0:
+		if x%frameRate == 0:
 			get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
 		x-=1
 
@@ -81,28 +90,28 @@ for i in range(3):
 
 	while x<width/2:
 		updateScreen(x, y, screen)
-		if x%50 == 0:
+		if x%frameRate == 0:
 			get_image(camera,'{0}_{1}/{2}'.format(x, y, timestamp))
 		x+=1
 
 
 	while y < height:
 		updateScreen(x, y, screen)
-		if y%50 == 0:
+		if y%frameRate == 0:
 			get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
 		y+=1
 
 
 	while y >0:
 		updateScreen(x, y, screen)
-		if y%50 == 0:
+		if y%frameRate == 0:
 			get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
 		y-=1
 
 
 	while y<height/2:
 		updateScreen(x, y, screen)
-		if y%50 == 0:
+		if y%frameRate == 0:
 			get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
 		y+=1
 
