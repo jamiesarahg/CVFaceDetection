@@ -55,64 +55,62 @@ def updateScreen(x, y, screen):
 	pygame.display.update()
 	time.sleep(sleepTime)
 
+def intakeData(camera, screen, width, height, frameRate)
+	for i in range(2):
+		timestamp = time.time()
+		x=width/2
+		y=height/2
+
+		while x < width:
+			updateScreen(x, y, screen)
+			if x%frameRate == 0:
+				get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
+			x+=1
+
+		while x >0:
+			updateScreen(x, y, screen)
+			if x%frameRate == 0:
+				get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
+			x-=1
 
 
 
-width = 800
-height = 800
-frameRate = 50
-
-mkdirs(width)
-
-
-
-camera = initializeCamera()
-screen = initializeScreen(width, height)
-
-for i in range(2):
-	timestamp = time.time()
-	x=width/2
-	y=height/2
-
-	while x < width:
-		updateScreen(x, y, screen)
-		if x%frameRate == 0:
-			get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
-		x+=1
-
-	while x >0:
-		updateScreen(x, y, screen)
-		if x%frameRate == 0:
-			get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
-		x-=1
+		while x<width/2:
+			updateScreen(x, y, screen)
+			if x%frameRate == 0:
+				get_image(camera,'{0}_{1}/{2}'.format(x, y, timestamp))
+			x+=1
 
 
-
-	while x<width/2:
-		updateScreen(x, y, screen)
-		if x%frameRate == 0:
-			get_image(camera,'{0}_{1}/{2}'.format(x, y, timestamp))
-		x+=1
-
-
-	while y < height:
-		updateScreen(x, y, screen)
-		if y%frameRate == 0:
-			get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
-		y+=1
+		while y < height:
+			updateScreen(x, y, screen)
+			if y%frameRate == 0:
+				get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
+			y+=1
 
 
-	while y >0:
-		updateScreen(x, y, screen)
-		if y%frameRate == 0:
-			get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
-		y-=1
+		while y >0:
+			updateScreen(x, y, screen)
+			if y%frameRate == 0:
+				get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
+			y-=1
 
 
-	while y<height/2:
-		updateScreen(x, y, screen)
-		if y%frameRate == 0:
-			get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
-		y+=1
+		while y<height/2:
+			updateScreen(x, y, screen)
+			if y%frameRate == 0:
+				get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
+			y+=1
 
-del(camera)
+if __name__ == "__main__":
+
+	width = 800
+	height = 800
+	frameRate = 50
+
+	mkdirs(width)
+
+	camera = initializeCamera()
+	screen = initializeScreen(width, height)
+	
+	del(camera)
