@@ -18,11 +18,11 @@ def get_image(camera, name):
 	face_cascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml')
 	retval, im = camera.read()
 	faces = face_cascade.detectMultiScale(im, scaleFactor=1.2, minSize=(20,20))
-	print faces[0]
-	(x,y,w,h) = faces[0]
- 	cropped = im[y:y+h, x:x+w]
+	if faces!= ():
+		(x,y,w,h) = faces[0]
+ 		im = im[y:y+h, x:x+w]
  	_file = "images/" + name + ".png"
- 	cv2.imwrite(_file, cropped)
+ 	cv2.imwrite(_file, im)
 
 
 
