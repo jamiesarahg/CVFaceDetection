@@ -41,7 +41,7 @@ def initializeScreen(width, height):
 def updateScreen(x, y, screen):
 	white = (255,255,255)
 	black = (0,0,0)
-	sleepTime = .005
+	sleepTime = .001
 
 	screen.fill(black)
 	pygame.draw.circle(screen, white, (x,y), 5)
