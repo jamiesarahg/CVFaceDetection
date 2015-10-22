@@ -18,11 +18,11 @@ def get_image(camera, name):
 	face_cascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml')
 	retval, im = camera.read()
 	faces = face_cascade.detectMultiScale(im, scaleFactor=1.2, minSize=(20,20))
-	if faces!= ():
-		(x,y,w,h) = faces[0]
- 		im = im[y:y+h, x:x+w]
+	print faces[0]
+	(x,y,w,h) = faces[0]
+ 	cropped = im[y:y+h, x:x+w]
  	_file = "images/" + name + ".png"
- 	cv2.imwrite(_file, im)
+ 	cv2.imwrite(_file, cropped)
 
 
 
@@ -108,10 +108,27 @@ if __name__ == "__main__":
 	height = 800
 	frameRate = 50
 
+	ready = False
 	mkdirs(width)
 
 	camera = initializeCamera()
 	screen = initializeScreen(width, height)
+	face_cascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml')
+
+
+	while ready == False:
+		ret, frame = camera.read()
+		faces = face_cascade.detectMultiScale(frame, scaleFactor=1.2, minSize=(20,20))
+		for (x,y,w,h) in faces:
+			cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255))
+		cv2.imshow('frame',frame)
+		if cv2.waitKey(1) & 0xFF == ord('q'):
+			ready=True 
+			cv2.waitKey(1)
+			cv2.destroyWindow('frame')
+			cv2.destroyAllWindows()
+			cv2.waitKey(1)
+			break
 
 	intakeData(camera, screen, width, height, frameRate)
 
