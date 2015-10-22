@@ -55,7 +55,7 @@ def updateScreen(x, y, screen):
 	pygame.display.update()
 	time.sleep(sleepTime)
 
-def intakeData(camera, screen, width, height, frameRate)
+def intakeData(camera, screen, width, height, frameRate):
 	for i in range(2):
 		timestamp = time.time()
 		x=width/2
@@ -112,5 +112,7 @@ if __name__ == "__main__":
 
 	camera = initializeCamera()
 	screen = initializeScreen(width, height)
-	
+
+	intakeData(camera, screen, width, height, frameRate)
+
 	del(camera)
