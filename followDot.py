@@ -4,6 +4,11 @@ import cv2
 import os
 
 def mkdirs(width):
+	try:
+		os.mkdir('images')
+	except OSError:
+		pass
+
 	i = 0
 	while i <=width:
 		try:
@@ -14,15 +19,21 @@ def mkdirs(width):
 		i += frameRate
 
 
-def get_image(camera, name):
+def compressImage(im):
+	print type(im)
+	print im.shape
+
+
+def getImage(camera, name):
 	face_cascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml')
 	retval, im = camera.read()
 	faces = face_cascade.detectMultiScale(im, scaleFactor=1.2, minSize=(20,20))
 	if faces!= ():
 		(x,y,w,h) = faces[0]
  		im = im[y:y+h, x:x+w]
- 	_file = "images/" + name + ".png"
- 	cv2.imwrite(_file, im)
+ 		compressImage(im)
+ 		_file = "images/" + name + ".png"
+ 		cv2.imwrite(_file, im)
 
 
 
@@ -64,13 +75,13 @@ def intakeData(camera, screen, width, height, frameRate):
 		while x < width:
 			updateScreen(x, y, screen)
 			if x%frameRate == 0:
-				get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
+				getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
 			x+=1
 
 		while x >0:
 			updateScreen(x, y, screen)
 			if x%frameRate == 0:
-				get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
+				getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
 			x-=1
 
 
@@ -78,28 +89,28 @@ def intakeData(camera, screen, width, height, frameRate):
 		while x<width/2:
 			updateScreen(x, y, screen)
 			if x%frameRate == 0:
-				get_image(camera,'{0}_{1}/{2}'.format(x, y, timestamp))
+				getImage(camera,'{0}_{1}/{2}'.format(x, y, timestamp))
 			x+=1
 
 
 		while y < height:
 			updateScreen(x, y, screen)
 			if y%frameRate == 0:
-				get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
+				getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
 			y+=1
 
 
 		while y >0:
 			updateScreen(x, y, screen)
 			if y%frameRate == 0:
-				get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
+				getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
 			y-=1
 
 
 		while y<height/2:
 			updateScreen(x, y, screen)
 			if y%frameRate == 0:
-				get_image(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
+				getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
 			y+=1
 
 if __name__ == "__main__":
