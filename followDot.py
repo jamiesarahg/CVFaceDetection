@@ -2,6 +2,7 @@ import pygame
 import time
 import cv2
 import os
+import numpy as np
 
 def mkdirs(width):
 	try:
@@ -19,10 +20,29 @@ def mkdirs(width):
 		i += frameRate
 
 
-def compressImage(im):
-	print type(im)
-	print im.shape
+def compressImage(im, _file):
+	# im =  cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+	squareSize = im.shape[0]/24
+	posY = 0
+	newIm = np.ndarray((24, 24, 3))
+	while posY < im.shape[1]:
+		posX = 0
+		while posX < im.shape[0]: 	# go across
+			a = im[posX: posX + squareSize, posY: posY + squareSize]
+			sumB, sumG, sumR = [0, 0, 0]
+			for i in range(squareSize):
+				for j in range(squareSize):
+					sumB += a[i][j][0]
+					sumG += a[i][j][1]
+					sumR += a[i][j][2]
+			sumB = sumB/(squareSize)**2
+			sumG = sumG/(squareSize)**2
+			sumR = sumR/(squareSize)**2
+			newIm[posX/squareSize][posY/squareSize] = [sumB, sumG, sumR]
+			posX += squareSize
+		posY += squareSize
 
+	cv2.imwrite(_file, newIm)
 
 def getImage(camera, name):
 	face_cascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml')
@@ -30,9 +50,15 @@ def getImage(camera, name):
 	faces = face_cascade.detectMultiScale(im, scaleFactor=1.2, minSize=(20,20))
 	if faces!= ():
 		(x,y,w,h) = faces[0]
- 		im = im[y:y+h, x:x+w]
- 		compressImage(im)
- 		_file = "images/" + name + ".png"
+		#crop images such that the dimensions are a multiple of 24
+		if h%24 >0:
+			try:
+ 				im = im[y:y + h + 24 - h%24, x:x + w + 24 - w%24]
+	 		except IndexError:
+	 			im = im[y:y + h - h%24, x:x + w - w%24]
+	 	else:
+	 		im = im[y:y + h, x:x + w]
+		_file = "images/" + name + ".png"
  		cv2.imwrite(_file, im)
 
 
@@ -112,6 +138,24 @@ def intakeData(camera, screen, width, height, frameRate):
 			if y%frameRate == 0:
 				getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
 			y+=1
+
+		
+		i = 0
+		while i <=width:
+			_file = 'images/400_{0}/{1}.png'.format(i, timestamp)
+			im = cv2.imread(_file)
+			if type(im) == np.ndarray:
+				print type(im)
+				compressImage(im, _file)
+			
+			_file = 'images/{0}_400/{1}.png'.format(i, timestamp)
+			im = cv2.imread(_file)
+			if type(im) == np.ndarray:
+				print type(im)
+				compressImage(im, _file)
+			
+			i += frameRate
+
 
 if __name__ == "__main__":
 
