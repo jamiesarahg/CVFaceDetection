@@ -61,8 +61,6 @@ def getImage(camera, name):
 		_file = "images/" + name + ".png"
  		cv2.imwrite(_file, im)
 
-
-
 def initializeCamera():
 	camera_port = 0
 	camera = cv2.VideoCapture(camera_port) 
@@ -163,10 +161,27 @@ if __name__ == "__main__":
 	height = 800
 	frameRate = 50
 
+	ready = False
 	mkdirs(width)
 
 	camera = initializeCamera()
 	screen = initializeScreen(width, height)
+	face_cascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml')
+
+
+	while ready == False:
+		ret, frame = camera.read()
+		faces = face_cascade.detectMultiScale(frame, scaleFactor=1.2, minSize=(20,20))
+		for (x,y,w,h) in faces:
+			cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255))
+		cv2.imshow('frame',frame)
+		if cv2.waitKey(1) & 0xFF == ord('q'):
+			ready=True 
+			cv2.waitKey(1)
+			cv2.destroyWindow('frame')
+			cv2.destroyAllWindows()
+			cv2.waitKey(1)
+			break
 
 	intakeData(camera, screen, width, height, frameRate)
 
