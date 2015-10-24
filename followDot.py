@@ -91,68 +91,67 @@ def updateScreen(x, y, screen):
 	time.sleep(sleepTime)
 
 def intakeData(camera, screen, width, height, frameRate):
-	for i in range(2):
-		timestamp = time.time()
-		x=width/2
-		y=height/2
+	timestamp = time.time()
+	x=width/2
+	y=height/2
 
-		while x < width:
-			updateScreen(x, y, screen)
-			if x%frameRate == 0:
-				getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
-			x+=1
+	while x < width:
+		updateScreen(x, y, screen)
+		if x%frameRate == 0:
+			getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
+		x+=1
 
-		while x >0:
-			updateScreen(x, y, screen)
-			if x%frameRate == 0:
-				getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
-			x-=1
-
+	while x >0:
+		updateScreen(x, y, screen)
+		if x%frameRate == 0:
+			getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
+		x-=1
 
 
-		while x<width/2:
-			updateScreen(x, y, screen)
-			if x%frameRate == 0:
-				getImage(camera,'{0}_{1}/{2}'.format(x, y, timestamp))
-			x+=1
+
+	while x<width/2:
+		updateScreen(x, y, screen)
+		if x%frameRate == 0:
+			getImage(camera,'{0}_{1}/{2}'.format(x, y, timestamp))
+		x+=1
 
 
-		while y < height:
-			updateScreen(x, y, screen)
-			if y%frameRate == 0:
-				getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
-			y+=1
+	while y < height:
+		updateScreen(x, y, screen)
+		if y%frameRate == 0:
+			getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
+		y+=1
 
 
-		while y >0:
-			updateScreen(x, y, screen)
-			if y%frameRate == 0:
-				getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
-			y-=1
+	while y >0:
+		updateScreen(x, y, screen)
+		if y%frameRate == 0:
+			getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
+		y-=1
 
 
-		while y<height/2:
-			updateScreen(x, y, screen)
-			if y%frameRate == 0:
-				getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
-			y+=1
+	while y<height/2:
+		updateScreen(x, y, screen)
+		if y%frameRate == 0:
+			getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
+		y+=1
 
+	
+	i = 0
+	while i <=width:
+		_file = 'images/400_{0}/{1}.png'.format(i, timestamp)
+		im = cv2.imread(_file)
+		if type(im) == np.ndarray:
+			print type(im)
+			compressImage(im, _file)
 		
-		i = 0
-		while i <=width:
-			_file = 'images/400_{0}/{1}.png'.format(i, timestamp)
-			im = cv2.imread(_file)
-			if type(im) == np.ndarray:
-				print type(im)
-				compressImage(im, _file)
-			
-			_file = 'images/{0}_400/{1}.png'.format(i, timestamp)
-			im = cv2.imread(_file)
-			if type(im) == np.ndarray:
-				print type(im)
-				compressImage(im, _file)
-			
-			i += frameRate
+		_file = 'images/{0}_400/{1}.png'.format(i, timestamp)
+		im = cv2.imread(_file)
+		if type(im) == np.ndarray:
+			print type(im)
+			compressImage(im, _file)
+		
+		i += frameRate
 
 
 if __name__ == "__main__":
@@ -182,6 +181,7 @@ if __name__ == "__main__":
 			cv2.destroyAllWindows()
 			cv2.waitKey(1)
 			break
+	time.sleep(1)
 
 	intakeData(camera, screen, width, height, frameRate)
 
