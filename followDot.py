@@ -24,12 +24,7 @@ def mkdirs(width, frameRate):
 			pass
 		i += frameRate
 
-<<<<<<< HEAD
-
-def compressImage(im):
-=======
 def compressImage(im, _file):
->>>>>>> a3a53f54107e8726e6c9c617b6ca458eac0845a8
 	"""compresses Images to 24 by 24 pixel images
 	input: im - image intakeData
 					_file - filename
@@ -216,26 +211,16 @@ def intakeData(camera, screen, width, height, frameRate):
 		im = cv2.imread(_file)
 		#only compress if image exists
 		if type(im) == np.ndarray:
-<<<<<<< HEAD
-			print type(im)
 			newIm = compressImage(im)
 			cv2.imwrite(_file, newIm)
-=======
-			compressImage(im, _file)
->>>>>>> a3a53f54107e8726e6c9c617b6ca458eac0845a8
 		
 		_file = 'images/{0}_400/{1}.png'.format(i, timestamp)
 		im = cv2.imread(_file)
 		#only compress if image exists
 		if type(im) == np.ndarray:
-<<<<<<< HEAD
 			print type(im)
 			newIm = compressImage(im)
 			cv2.imwrite(_file, newIm)
-=======
-			compressImage(im, _file)
->>>>>>> a3a53f54107e8726e6c9c617b6ca458eac0845a8
-		
 		i += frameRate
 
 
