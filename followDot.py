@@ -24,7 +24,6 @@ def mkdirs(width, frameRate):
 			pass
 		i += frameRate
 
-
 def compressImage(im, _file):
 	"""compresses Images to 24 by 24 pixel images
 	input: im - image intakeData
@@ -50,8 +49,13 @@ def compressImage(im, _file):
 			sumR = sumR/(squareSize)**2
 
 			#recompile the new image
-			newIm[posX/squareSize][posY/squareSize] = [sumB, sumG, sumR]
-
+			try:
+			 newIm[posX/squareSize][posY/squareSize] = [sumB, sumG, sumR]
+			except IndexError:
+				print squareSize
+				print posX
+				print posX/squareSize
+				print posY/squareSize
 			#increment to the next square for compression
 			posX += squareSize
 		posY += squareSize
@@ -190,14 +194,12 @@ def intakeData(camera, screen, width, height, frameRate):
 		im = cv2.imread(_file)
 		#only compress if image exists
 		if type(im) == np.ndarray:
-			print type(im)
 			compressImage(im, _file)
 		
 		_file = 'images/{0}_400/{1}.png'.format(i, timestamp)
 		im = cv2.imread(_file)
 		#only compress if image exists
 		if type(im) == np.ndarray:
-			print type(im)
 			compressImage(im, _file)
 		
 		i += frameRate
@@ -210,7 +212,7 @@ if __name__ == "__main__":
 	frameRate = 50
 
 	ready = False
-	mkdirs(width)
+	mkdirs(width, frameRate)
 
 	camera = initializeCamera()
 	screen = initializeScreen(width, height)

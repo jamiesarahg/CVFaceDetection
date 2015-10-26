@@ -1,5 +1,5 @@
-import numpy as numpy
-from sklearn import linear_model
+import numpy as np
+from sklearn.linear_model import Ridge
 
 def get_training_data():
   """Collect data from compressed images and convert to X_training and Y_training
