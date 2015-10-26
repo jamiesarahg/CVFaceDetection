@@ -25,7 +25,7 @@ def mkdirs(width, frameRate):
 		i += frameRate
 
 
-def compressImage(im, _file):
+def compressImage(im):
 	"""compresses Images to 24 by 24 pixel images
 	input: im - image intakeData
 					_file - filename
@@ -55,8 +55,9 @@ def compressImage(im, _file):
 			#increment to the next square for compression
 			posX += squareSize
 		posY += squareSize
+	return newIm
 
-	cv2.imwrite(_file, newIm)
+	
 
 def getImage(camera, name):
 	"""takes in image from camera, identifies face in the image and saves the image
@@ -68,19 +69,35 @@ def getImage(camera, name):
 	retval, im = camera.read()
 	faces = face_cascade.detectMultiScale(im, scaleFactor=1.2, minSize=(20,20))
 	if faces!= ():
-		(x,y,w,h) = faces[0]
-		#crop images such that the pixel dimensions are squares with sides of multiple of 24
-		if h%24 >0:
-			try:
- 				im = im[y:y + h + 24 - h%24, x:x + w + 24 - w%24]
-	 		except IndexError:
-	 			im = im[y:y + h - h%24, x:x + w - w%24]
-	 	else:
-	 		im = im[y:y + h, x:x + w]
+	 	im = cropImage(im,faces[0])
+	# 	(x,y,w,h) = faces[0]
+	# 	#crop images such that the pixel dimensions are squares with sides of multiple of 24
+	# 	if h%24 >0:
+	# 		try:
+ # 				im = im[y:y + h + 24 - h%24, x:x + w + 24 - w%24]
+	#  		except IndexError:
+	#  			im = im[y:y + h - h%24, x:x + w - w%24]
+	#  	else:
+	#  		im = im[y:y + h, x:x + w]
+
+
 
 	 	#save images
 		_file = "images/" + name + ".png"
  		cv2.imwrite(_file, im)
+
+def cropImage(im, faceData):
+	(x,y,w,h) = faceData
+	#crop images such that the pixel dimensions are squares with sides of multiple of 24
+	if h%24 >0:
+		try:
+				im = im[y:y + h + 24 - h%24, x:x + w + 24 - w%24]
+ 		except IndexError:
+ 			im = im[y:y + h - h%24, x:x + w - w%24]
+ 	else:
+ 		im = im[y:y + h, x:x + w]
+ 	return im
+
 
 def initializeCamera():
 	""" helper function to initialize camera
@@ -191,14 +208,16 @@ def intakeData(camera, screen, width, height, frameRate):
 		#only compress if image exists
 		if type(im) == np.ndarray:
 			print type(im)
-			compressImage(im, _file)
+			newIm = compressImage(im)
+			cv2.imwrite(_file, newIm)
 		
 		_file = 'images/{0}_400/{1}.png'.format(i, timestamp)
 		im = cv2.imread(_file)
 		#only compress if image exists
 		if type(im) == np.ndarray:
 			print type(im)
-			compressImage(im, _file)
+			newIm = compressImage(im)
+			cv2.imwrite(_file, newIm)
 		
 		i += frameRate
 

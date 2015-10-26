@@ -46,11 +46,15 @@ def ridge_predict(X_test, ridge):
   prediction =  ridge.predict(X_test)
   return prediction[0]
 
-if __name__ == "__main__":
-
+def get_ridge_model():
   X_train, Y_train = get_training_data()
   ridge = linear_model.Ridge(alpha=.1)
   ridge.fit(X_train, Y_train)
+  return ridge
+
+if __name__ == "__main__":
+
+  ridge = get_ridge_model()
 
   im = cv2.imread('images/400_0/1445703971.02.png', 0)
   im2 = cv2.imread('images/0_400/1445703971.02.png', 0)
