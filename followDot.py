@@ -24,7 +24,7 @@ def mkdirs(width, frameRate):
 			pass
 		i += frameRate
 
-def compressImage(im, _file):
+def compressImage(im):
 	"""compresses Images to 24 by 24 pixel images
 	input: im - image intakeData
 					_file - filename
@@ -74,17 +74,6 @@ def getImage(camera, name):
 	faces = face_cascade.detectMultiScale(im, scaleFactor=1.2, minSize=(20,20))
 	if faces!= ():
 	 	im = cropImage(im,faces[0])
-	# 	(x,y,w,h) = faces[0]
-	# 	#crop images such that the pixel dimensions are squares with sides of multiple of 24
-	# 	if h%24 >0:
-	# 		try:
- # 				im = im[y:y + h + 24 - h%24, x:x + w + 24 - w%24]
-	#  		except IndexError:
-	#  			im = im[y:y + h - h%24, x:x + w - w%24]
-	#  	else:
-	#  		im = im[y:y + h, x:x + w]
-
-
 
 	 	#save images
 		_file = "images/" + name + ".png"
