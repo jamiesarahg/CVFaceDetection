@@ -35,7 +35,6 @@ def get_training_data():
 
   return (X_train, Y_train)
 
-
 def ridge_predict(X_test, ridge):
   """predicts a pitch and yaw from an input image
   inputs: X_test - 24 by 24 image file of a face
@@ -47,19 +46,11 @@ def ridge_predict(X_test, ridge):
   return prediction[0]
 
 def get_ridge_model(alpha):
+  """ creates a ridge model from the files saved in the directory folders
+  inputs: alpha - parameter in ridge model for controling precision
+  outputs: ridge - scikit learn ridge model"""
+
   X_train, Y_train = get_training_data()
   ridge = linear_model.Ridge(alpha=alpha)
   ridge.fit(X_train, Y_train)
   return ridge
-
-if __name__ == "__main__":
-
-  ridge = get_ridge_model(.1)
-
-  im = cv2.imread('images/400_0/1445703971.02.png', 0)
-  im2 = cv2.imread('images/0_400/1445703971.02.png', 0)
-
-  reshaped = np.reshape(im, 576)
-  reshaped2 = np.reshape(im2, 576)
-  print reshaped
-  print ridge_predict([reshaped], ridge)
