@@ -31,6 +31,7 @@ def manipulateImage(im):
     gray = cv2.cvtColor(compressed, cv2.COLOR_BGR2GRAY )
     reshaped = np.reshape(gray, 576)
     return reshaped
+
 def updateAverage(previous12values, currentYaw, currentPitch):
   """ updates the calculation of the moving average of Yaw and pitch
       inputs - previous12values list of two lists, first of which is the most recent 12 yaw readings, not including the one just taken,

@@ -78,17 +78,17 @@ def getImage(camera, name):
 	retval, im = camera.read()
 	faces = face_cascade.detectMultiScale(im, scaleFactor=1.2, minSize=(20,20))
 	if faces!= ():
-<<<<<<< HEAD
 		im = cropImage(im, faces)
-=======
-	 	im = cropImage(im,faces[0])
-
 	 	#save images
->>>>>>> 80701833ce53eb522668068d16345bfaf581e8fc
 		_file = "images/" + name + ".png"
 		cv2.imwrite(_file, im)
 
 def cropImage(im, faces):
+	""" crops camera Image to the largest face detected to a dimension that a multiple of 24
+			inputs - im: image
+			faces - list of faces detected, in the form of (x, y, heigh, width)
+			outputs - croped image"""
+			
 	#choose largest detected face
 	maxIndex, maxSize = [0, 0];
 	for i, f in enumerate(faces):
