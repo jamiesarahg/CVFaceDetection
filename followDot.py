@@ -41,9 +41,14 @@ def compressImage(im):
 			sumB, sumG, sumR = [0, 0, 0]
 			for i in range(squareSize):
 				for j in range(squareSize):
-					sumB += a[i][j][0]
-					sumG += a[i][j][1]
-					sumR += a[i][j][2]
+					try:
+						sumB += a[i][j][0]
+						sumG += a[i][j][1]
+						sumR += a[i][j][2]
+					except IndexError:
+						print squareSize
+						print im.shape
+						
 			sumB = sumB/(squareSize)**2
 			sumG = sumG/(squareSize)**2
 			sumR = sumR/(squareSize)**2
@@ -73,23 +78,37 @@ def getImage(camera, name):
 	retval, im = camera.read()
 	faces = face_cascade.detectMultiScale(im, scaleFactor=1.2, minSize=(20,20))
 	if faces!= ():
+<<<<<<< HEAD
+		im = cropImage(im, faces)
+=======
 	 	im = cropImage(im,faces[0])
 
 	 	#save images
+>>>>>>> 80701833ce53eb522668068d16345bfaf581e8fc
 		_file = "images/" + name + ".png"
- 		cv2.imwrite(_file, im)
+		cv2.imwrite(_file, im)
 
-def cropImage(im, faceData):
+def cropImage(im, faces):
+	#choose largest detected face
+	maxIndex, maxSize = [0, 0];
+	for i, f in enumerate(faces):
+		size = (f[2])*(f[3])
+		if size > maxSize:
+			maxIndex = i
+			maxSize = size
+	
+	faceData = faces[maxIndex]
 	(x,y,w,h) = faceData
-	#crop images such that the pixel dimensions are squares with sides of multiple of 24
+
+	#crop such that image dimensions are multiples of 24
 	if h%24 >0:
 		try:
-				im = im[y:y + h + 24 - h%24, x:x + w + 24 - w%24]
- 		except IndexError:
- 			im = im[y:y + h - h%24, x:x + w - w%24]
- 	else:
- 		im = im[y:y + h, x:x + w]
- 	return im
+			im = im[y:y + h + 24 - h%24, x:x + w + 24 - w%24]
+		except IndexError:
+			im = im[y:y + h - h%24, x:x + w - w%24]
+	else:
+		im = im[y:y + h, x:x + w]
+	return im
 
 
 def initializeCamera():
@@ -158,6 +177,7 @@ def intakeData(camera, screen, width, height, frameRate):
 		if x%frameRate == 0:
 			getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
 		x+=1
+	
 	# moves ball to left of screen
 	while x >0:
 		updateScreen(x, y, screen)
@@ -186,7 +206,7 @@ def intakeData(camera, screen, width, height, frameRate):
 			getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
 		y-=1
 
-		# moves ball to center of screen
+	# moves ball to center of screen
 	while y<height/2:
 		updateScreen(x, y, screen)
 		if y%frameRate == 0:
@@ -194,24 +214,13 @@ def intakeData(camera, screen, width, height, frameRate):
 		y+=1
 
 	#compressess all of the images to 24 by 24 pixel square images and saves them to local storage
-	i = 0
-	while i <=width:
-		_file = 'images/400_{0}/{1}.png'.format(i, timestamp)
+	for directory in os.listdir(os.getcwd()+ '/images'):
+		# for _file in os.listdir(os.getcwd()+ '/images/' + directory):
+		_file = os.getcwd() + '/images/' + directory + '/' + str(timestamp) + '.png'
 		im = cv2.imread(_file)
-		#only compress if image exists
 		if type(im) == np.ndarray:
-			newIm = compressImage(im)
+			newIm = compressImage(im, _file)
 			cv2.imwrite(_file, newIm)
-		
-		_file = 'images/{0}_400/{1}.png'.format(i, timestamp)
-		im = cv2.imread(_file)
-		#only compress if image exists
-		if type(im) == np.ndarray:
-			print type(im)
-			newIm = compressImage(im)
-			cv2.imwrite(_file, newIm)
-		i += frameRate
-
 
 if __name__ == "__main__":
 
