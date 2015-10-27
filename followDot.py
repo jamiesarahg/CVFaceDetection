@@ -24,7 +24,7 @@ def mkdirs(width, frameRate):
 			pass
 		i += frameRate
 
-def compressImage(im, _file):
+def compressImage(im):
 	"""compresses Images to 24 by 24 pixel images
 	input: im - image intakeData
 					_file - filename
@@ -78,7 +78,13 @@ def getImage(camera, name):
 	retval, im = camera.read()
 	faces = face_cascade.detectMultiScale(im, scaleFactor=1.2, minSize=(20,20))
 	if faces!= ():
+<<<<<<< HEAD
 		im = cropImage(im, faces)
+=======
+	 	im = cropImage(im,faces[0])
+
+	 	#save images
+>>>>>>> 80701833ce53eb522668068d16345bfaf581e8fc
 		_file = "images/" + name + ".png"
 		cv2.imwrite(_file, im)
 
