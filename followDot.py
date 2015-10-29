@@ -80,7 +80,6 @@ def getImage(camera, name):
 	if faces!= (): #if faces are found
 		im = cropImage(im, faces)
 
-
 	 	#save images
 		_file = "images/" + name + ".png"
 		cv2.imwrite(_file, im)
@@ -90,6 +89,7 @@ def cropImage(im, faces):
 	input: 	im - the full image to crop
 					faces - list of detected faces in image
 	output:	cropped image """
+
 	#choose largest detected face
 	maxIndex, maxSize = [0, 0];
 	for i, f in enumerate(faces):
