@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import numpy as np
 from sklearn import linear_model
 from os import listdir
@@ -19,17 +21,19 @@ def get_training_data():
     onlyfiles = [ f for f in listdir(directory) if isfile(join(directory,f)) ]
     for item in onlyfiles:
       im = cv2.imread(directory+'/'+item, 0)
-      reshaped = np.reshape(im, 576)
-      X_train.append(reshaped)
-      Y_train.append((400,i))
+      if im.shape == (24, 24):
+        reshaped = np.reshape(im, 576)
+        X_train.append(reshaped)
+        Y_train.append((400,i))
 
     directory = 'images/' + str(i) + '_400'
     onlyfiles = [ f for f in listdir(directory) if isfile(join(directory,f)) ]
     for item in onlyfiles:
       im = cv2.imread(directory+'/'+item, 0)
-      reshaped = np.reshape(im, 576)
-      X_train.append(reshaped)
-      Y_train.append((i, 400))
+      if im.shape == (24, 24):
+        reshaped = np.reshape(im, 576)
+        X_train.append(reshaped)
+        Y_train.append((i, 400))
 
     i+= frameRate
 
