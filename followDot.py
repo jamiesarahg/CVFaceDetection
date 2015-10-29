@@ -5,13 +5,13 @@ import os
 import numpy as np
 
 def mkdirs(width, frameRate):
-	""" if directories to collect images do not exist, make the respective directories
-			input: width of screen of pong ball
-						 frameRate = number of pixels of dot on screen between which we take pictures
-			output: none, but creates directories in local storage	"""
-	try:
+	""" creates directories in local storage if they don't already exist
+			input: width - screen of pong ball width
+						 frameRate - how many pixels between each photo
+			returns: none """
+	try: #make an images directory
 		os.mkdir('images')
-	except OSError:
+	except OSError: #if it already exists
 		pass
 
 	i = 0
@@ -30,14 +30,14 @@ def compressImage(im):
 					_file - filename
 	output: compressed image """
 
-	squareSize = im.shape[0]/24 # number of pixels from one direction that will be compressed into one pixel
+	squareSize = im.shape[0]/24 # number of pixels on 1 side of the square that will become an averaged pixel
 	posY = 0
 	newIm = np.ndarray((24, 24, 3)) # creating array for compressed image
 	while posY < im.shape[1]:
 		posX = 0
 		while posX < im.shape[0]: 	# go across
-			a = im[posX: posX + squareSize, posY: posY + squareSize] #crop image to square that will be compressed to one pixel
-			#sum the BGR values across the square to make an average
+			a = im[posX: posX + squareSize, posY: posY + squareSize] #crop image to one square
+			#sum the BGR values across the square
 			sumB, sumG, sumR = [0, 0, 0]
 			for i in range(squareSize):
 				for j in range(squareSize):
@@ -45,18 +45,18 @@ def compressImage(im):
 						sumB += a[i][j][0]
 						sumG += a[i][j][1]
 						sumR += a[i][j][2]
-					except IndexError:
+					except IndexError: #we were getting sporadic errors here
 						print squareSize
 						print im.shape
 						
-			sumB = sumB/(squareSize)**2
+			sumB = sumB/(squareSize)**2 #get the average BGR values
 			sumG = sumG/(squareSize)**2
 			sumR = sumR/(squareSize)**2
 
-			#recompile the new image
+			#update one pixel in the compressed image array
 			try:
 			 newIm[posX/squareSize][posY/squareSize] = [sumB, sumG, sumR]
-			except IndexError:
+			except IndexError: #and also here
 				print squareSize
 				print posX
 				print posX/squareSize
@@ -75,20 +75,21 @@ def getImage(camera, name):
 	output: none"""
 
 	face_cascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml')
-	retval, im = camera.read()
-	faces = face_cascade.detectMultiScale(im, scaleFactor=1.2, minSize=(20,20))
-	if faces!= ():
-<<<<<<< HEAD
+	retval, im = camera.read() #take webcame photo
+	faces = face_cascade.detectMultiScale(im, scaleFactor=1.2, minSize=(20,20)) #detect faces
+	if faces!= (): #if faces are found
 		im = cropImage(im, faces)
-=======
-	 	im = cropImage(im,faces[0])
+
 
 	 	#save images
->>>>>>> 80701833ce53eb522668068d16345bfaf581e8fc
 		_file = "images/" + name + ".png"
 		cv2.imwrite(_file, im)
 
 def cropImage(im, faces):
+	"""crops image to include only the face
+	input: 	im - the full image to crop
+					faces - list of detected faces in image
+	output:	cropped image """
 	#choose largest detected face
 	maxIndex, maxSize = [0, 0];
 	for i, f in enumerate(faces):
@@ -114,7 +115,7 @@ def cropImage(im, faces):
 def initializeCamera():
 	""" helper function to initialize camera
 	input - none
-	output - camera data"""
+	output - camera object"""
 
 	camera_port = 0
 	camera = cv2.VideoCapture(camera_port) 
@@ -133,7 +134,7 @@ def initializeScreen(width, height):
 
 	white = (255,255,255)
 	black = (0,0,0)
-	sleepTime = .005
+	sleepTime = .005 
 	pygame.init()
 	screen = pygame.display.set_mode((width,height))
 	pygame.draw.circle(screen, white, (width/2,height/2), 5)
@@ -145,8 +146,7 @@ def updateScreen(x, y, screen):
 	"""updates location of ball on screen
 			inputs: x, y  - position of ball
 							screen - pygame screen 
-			outputs: none
-			redisplays screen """
+			outputs: none """
 
 	white = (255,255,255)
 	black = (0,0,0)
@@ -164,7 +164,7 @@ def intakeData(camera, screen, width, height, frameRate):
 							width - width of pygame screen
 							height - height of pygame screen
 							frameRate - number of pixels that ball will move between image save
-			outputs: none, but images are saved to local storage
+			outputs: returns none, images get saved to local storage
 			"""
 
 	timestamp = time.time()
@@ -213,9 +213,8 @@ def intakeData(camera, screen, width, height, frameRate):
 			getImage(camera, '{0}_{1}/{2}'.format(x, y, timestamp))
 		y+=1
 
-	#compressess all of the images to 24 by 24 pixel square images and saves them to local storage
+	#compressess all of the images saves over them in local storage
 	for directory in os.listdir(os.getcwd()+ '/images'):
-		# for _file in os.listdir(os.getcwd()+ '/images/' + directory):
 		_file = os.getcwd() + '/images/' + directory + '/' + str(timestamp) + '.png'
 		im = cv2.imread(_file)
 		if type(im) == np.ndarray:
@@ -229,14 +228,14 @@ if __name__ == "__main__":
 	frameRate = 50
 
 	ready = False
-	mkdirs(width, frameRate)
+	mkdirs(width, frameRate) #make directory structure
 
-	camera = initializeCamera()
+	camera = initializeCamera() 
 	screen = initializeScreen(width, height)
 	face_cascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml')
 
-
-	while ready == False:
+	#before experiment is ready to start
+	while ready == False: #show video and mark detected faces
 		ret, frame = camera.read()
 		faces = face_cascade.detectMultiScale(frame, scaleFactor=1.2, minSize=(20,20))
 		for (x,y,w,h) in faces:
