@@ -9,6 +9,7 @@ import ridgeRegression
 import numpy as np
 
 
+
 def aveList(listInput):
 	""" finds average of a list
 			inputs: listInput - list of integers or floats
@@ -58,24 +59,43 @@ def updateAverage(previous12values, currentYaw, currentPitch):
 	print 'yaw', newYaw, 'pitch', newPitch
 	return previous12values, newYaw, newPitch
 
+def predit_face(faces, clf, pca):
+	cropped = followDot.cropImage(frame, faces)
+	reshaped = manipulateImage(cropped)
+	X_test_pca = pca.transform([reshaped])
+	name = clf.predict(X_test_pca)
+	return name
+
 
 # if __name__ == "__main__":
 #calculate ridge model
-rospy.init_node('CV')
-ridge = ridgeRegression.get_ridge_model(.1)
+# rospy.init_node('CV')
+ridge, clf, pca = ridgeRegression.get_models()
+
 
 #initialize camera
 camera = followDot.initializeCamera()
 
 #initialize face classifier
 face_cascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml')
+ret, frame = camera.read()
+faces = face_cascade.detectMultiScale(frame, scaleFactor=1.2, minSize=(20,20))
+with open('nameToNumber.txt','r') as inf:
+    numberToName = eval(inf.read())
+number = predit_face(faces, clf, pca)
+print number[0]
+name = numberToName[number[0]]
+print 'Hi ' + name + ' press any key to begin'
+raw_input() 
+
+
 
 #initialize lists to hold previous yaw and pitch values
 previous12values =  ([0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0])
 
 #initialize publisher and twist for neato
-pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
-twist = Twist()
+# pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+# twist = Twist()
 
 #enter run loop
 running = True
