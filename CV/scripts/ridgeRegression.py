@@ -79,26 +79,55 @@ def get_ridge_model(X_train, Y_train_direction, alpha):
   return ridge
 
 def get_face_recognition_model(X_train, Y_train):
-  n_components = 100
+  """ does a principle component analysis of all of the faces, then gets the
+  eigenfaces, then runs a support vector machine that fits the compressed data
+  inputs: X_train traning set. list of images
+          Y_train - supervised targets, list of integers representing individual faces
+  outputs: clf - SVC classifier
+            pca - PCA algorithm"""
+
+  n_components = 20 # number of components of PCA
+
+  #run a PCA on the training data
   pca = RandomizedPCA(n_components=n_components, whiten=True).fit(X_train)
+  #dimensions of the incoming images
   h = 576
   w = 1
-  X_train = np.array(X_train)
+  X_train = np.array(X_train) #turning list inton numpy array
+
+  #reshaping pca components into eigenfaces if you want to view them
   eigenfaces = pca.components_.reshape((n_components, h, w))
+  #running PCA on training set
   X_train_pca = pca.transform(X_train)
 
-  print("Fitting the classifier to the training set")
+  # establishing parameters for SVM:
+  # C - misclassification vs simplicity
+  # gamma - influence of one single traning example
   param_grid = {'C': [1e3, 5e3, 1e4, 5e4, 1e5],
                 'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1], }
+
+
+  print("Fitting the classifier to the training set")
   clf = GridSearchCV(SVC(kernel='rbf', class_weight='auto'), param_grid)
   clf = clf.fit(X_train_pca, Y_train)
   return clf, pca
 
 def get_models():
-    X_train, Y_train_direction, Y_train_name = get_training_data()
-    ridge = get_ridge_model(X_train, Y_train_direction, .1)
-    clf, pca = get_face_recognition_model(X_train, Y_train_name)
-    return ridge, clf, pca
+  """ Overarching function to build model for both face recognition and face yaw and pitch
+      inputs: none
+      outputs: ridge - model for determining yaw and pitch of a face
+                clf - model for recognizing a face
+                pca - principle components used for facial recognition"""
+    # collects data from files
+  X_train, Y_train_direction, Y_train_name = get_training_data()
+  #runs face angle model
+  ridge = get_ridge_model(X_train, Y_train_direction, .1)
+  #runs face recognition model
+  clf, pca = get_face_recognition_model(X_train, Y_train_name)
+  return ridge, clf, pca
+
+
+
 
 
 if __name__ == '__main__':

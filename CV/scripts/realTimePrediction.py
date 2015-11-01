@@ -60,16 +60,22 @@ def updateAverage(previous12values, currentYaw, currentPitch):
 	return previous12values, newYaw, newPitch
 
 def predit_face(faces, clf, pca):
+	"""uses facial recognition model to predict the user's name"
+	inputs: faces - list of detected faces
+					clf - facial recognition classifier
+					pca - Principle component analysis used for classifying faces"""
 	cropped = followDot.cropImage(frame, faces)
 	reshaped = manipulateImage(cropped)
 	X_test_pca = pca.transform([reshaped])
-	name = clf.predict(X_test_pca)
+	number = clf.predict(X_test_pca)
+	with open('nameToNumber.txt','r') as inf:
+		numberToName = eval(inf.read())
+	name = numberToName[number[0]]
 	return name
 
-
-# if __name__ == "__main__":
-#calculate ridge model
 # rospy.init_node('CV')
+#calculate ridge model
+
 ridge, clf, pca = ridgeRegression.get_models()
 
 
@@ -80,11 +86,15 @@ camera = followDot.initializeCamera()
 face_cascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml')
 ret, frame = camera.read()
 faces = face_cascade.detectMultiScale(frame, scaleFactor=1.2, minSize=(20,20))
-with open('nameToNumber.txt','r') as inf:
-    numberToName = eval(inf.read())
-number = predit_face(faces, clf, pca)
-print number[0]
-name = numberToName[number[0]]
+
+while faces == ():
+	print 'No face detected'
+	ret, frame = camera.read()
+	faces = face_cascade.detectMultiScale(frame, scaleFactor=1.2, minSize=(20,20))
+
+name = predit_face(faces, clf, pca)
+print name
+
 print 'Hi ' + name + ' press any key to begin'
 raw_input() 
 
