@@ -1,18 +1,14 @@
 import numpy as np
 from sklearn import linear_model
-# from ImageManipulation import ImageManipulation
 from DataCollection import DirManager
-# import os
-# from os import listdir
-# from os.path import isfile, join
 import cv2
 
 
 class RidgeModel(DirManager):
-  def __init__(alpha=.1):
+  def __init__(self, alpha=.1):
     self.X_train, self.Y_train = self.getTrainingData()
     self.ridge = linear_model.Ridge(alpha=alpha)
-    self.ridge.fit(X_train, Y_train)
+    self.ridge.fit(self.X_train, self.Y_train)
 
   def getTrainingData(self):
     """Collect data from compressed images and convert to X_training and Y_training

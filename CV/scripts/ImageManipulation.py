@@ -4,10 +4,7 @@ import numpy as np
 class ImageManipulation(object):
   
   def __init__(self):
-    # self.face_cascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml')
-    # self.camera =  self.initializeCamera()
     self.camera = Camera()
-
 
   def compressImage(self, im):
     """compresses Images to 24 by 24 pixel images
@@ -66,6 +63,15 @@ class ImageManipulation(object):
       _file = "images/" + name + ".png"
       cv2.imwrite(_file, im)
 
+  def detectFaces(self):
+    ret, frame = self.camera.cam.read()
+    self.faces = self.camera.face_cascade.detectMultiScale(frame, scaleFactor=1.2, minSize=(20,20))
+    for (x,y,w,h) in self.faces:
+      cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255))
+    cv2.imshow('frame',frame)
+    cv2.waitKey(1)
+    return frame
+
   def reshapeImage(self, im):
     """ gray-scales and reshapes an image to first a 24x24 image, then a 576x1 asarray
         inputs: im - image to be manipulated
@@ -111,7 +117,7 @@ class Camera(object):
   def __init__(self):
     self.cam = self.initializeCamera()
     self.face_cascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml')
-    self.showVideoOnStartUp()
+    # self.showVideoOnStartUp()
   
   def initializeCamera(self):
     """ helper function to initialize camera
@@ -143,3 +149,17 @@ class Camera(object):
         cv2.waitKey(1)
         return
     time.sleep(1)
+
+
+
+  # def showVideo(self):
+  #   ret, frame = cam.read()
+  
+  #   # detects faces
+  #   faces = self.face_cascade.detectMultiScale(frame, scaleFactor=1.2, minSize=(20,20))
+  
+  #   #draws rectangle on face
+  #   for (x,y,w,h) in faces:
+  #     cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255))
+  #   cv2.imshow('frame',frame)
+  #   return faces

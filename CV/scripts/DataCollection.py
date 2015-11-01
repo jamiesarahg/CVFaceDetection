@@ -52,6 +52,7 @@ class DataCollection(DirManager):
     self.frameRate = 50
     self.mkdirs()
     self.ImManipulator = ImageManipulation()
+    self.ImManipulator.camera.showVideoOnStartUp()
     self.screen  = self.initializeScreen()
     self.intakeData()
     del(self.ImManipulator.camera.cam)
@@ -206,5 +207,5 @@ class DataCollection(DirManager):
 
 
 
-
-DataCollection()
+if __name__ == '__main__':
+  DataCollection()
