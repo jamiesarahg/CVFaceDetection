@@ -8,6 +8,7 @@ import ridgeRegression
 import numpy as np
 
 
+
 def aveList(listInput):
 	""" finds average of a list
 			inputs: listInput - list of integers or floats
@@ -53,9 +54,23 @@ def updateAverage(previous12values, currentYaw, currentPitch):
 	newPitch = aveList(previous12values[1])
 	return previous12values, newYaw, newPitch
 
+def predit_face(faces, clf, pca):
+	"""uses facial recognition model to predict the user's name"
+	inputs: faces - list of detected faces
+					clf - facial recognition classifier
+					pca - Principle component analysis used for classifying faces"""
+	cropped = followDot.cropImage(frame, faces)
+	reshaped = manipulateImage(cropped)
+	X_test_pca = pca.transform([reshaped])
+	number = clf.predict(X_test_pca)
+	with open('nameToNumber.txt','r') as inf:
+		numberToName = eval(inf.read())
+	name = numberToName[number[0]]
+	return name
 
-# if __name__ == "__main__":
+# rospy.init_node('CV')
 #calculate ridge model
+
 rospy.init_node('CV')
 
 ridge = ridgeRegression.get_ridge_model(.1)
@@ -65,11 +80,27 @@ camera = followDot.initializeCamera()
 
 #initialize face classifier
 face_cascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml')
+ret, frame = camera.read()
+faces = face_cascade.detectMultiScale(frame, scaleFactor=1.2, minSize=(20,20))
+
+while faces == ():
+	print 'No face detected'
+	ret, frame = camera.read()
+	faces = face_cascade.detectMultiScale(frame, scaleFactor=1.2, minSize=(20,20))
+
+name = predit_face(faces, clf, pca)
+print name
+
+print 'Hi ' + name + ' press any key to begin'
+raw_input() 
+
+
 
 #initialize lists to hold previous yaw and pitch values
 previous12values =  ([0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0])
 
 #initialize publisher and twist for neato
+
 pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
 # pubYaw = rospy.Publisher('/yaw', yaw, queue_size=10)
 # pubPitch = rospy.Publisher('/pitch', pitch, queue_size=10)

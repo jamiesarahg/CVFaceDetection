@@ -2,8 +2,10 @@ Writeup for CV Project
 Jamie Gorson and Nicole Rifkin
 
 What was the goal of your project?
+The goal of our project was to control a neato with facial recognition. Our program would track the yaw and pitch of our face in order to determine the speed and direction of the neato. 
 
 Describe how your system works.  Make sure to include the basic components and algorithms that comprise your project.
+Our system is comprised of a laptop camera, which uses a face classifier to identify faces in the image. The face is then run through a model, which was determined from a data set using ridge regression. This model determines the yaw and pitch of the incoming image. This is then sent to the neato to control its motion.
 
 Describe a design decision you had to make when working on your project and what you ultimately did (and why)? These design decisions could be particular choices for how you implemented some part of an algorithm or perhaps a decision regarding which of two external packages to use in your project.
 How to intake data
@@ -12,7 +14,10 @@ How to intake data
 How did you structure your code?
 
 What if any challenges did you face along the way?
+Face recognition was a challenge that we faced, since we took on a large challenge like that at a very late stage of the project. We were able to get it to work decently, but we would like to spend more time parameter turning and exploring with the different approaches. Due to time constraints, we had to pick one path to go down and do our best to implement it. Since neither of us have experience with facial recognition, it was a challenge, but I'm happy with the bit we were able to accomplish.
 
 What would you do to improve your project if you had more time?
+If we had more time, we would like to do two specific things. The first is make our program react faster. Because of intaking the images and the computation that we have to do with them, this runs relatively slowly, and the robot reacts slowly to head movement. While we have taken steps to address this, we wish that it could be even faster and don't believe we solved it completely. Of course, we would really like to improve the facial recognition aspect. Since it was a cool add-on to our project and not crucial to its success, we were not able to tune it as well as we would have liked, however if more research was done into facial recognition, we might be able to get a better model working.
 
 Did you learn any interesting lessons for future robotic programming projects? These could relate to working on robotics projects in teams, working on more open-ended (and longer term) problems, or any other relevant topic.
+Creating a dataset was one of the larger tasks of this project. We put in a lot of thought to how we designed the intake of data to both have well stored and documented information as well as good facial images. This experience was very informative for future projects for making datasets as well as interpreting them.
