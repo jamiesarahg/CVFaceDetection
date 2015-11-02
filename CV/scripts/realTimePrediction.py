@@ -68,7 +68,7 @@ def predit_face(faces, clf, pca):
 	name = numberToName[number[0]]
 	return name
 
-# rospy.init_node('CV')
+rospy.init_node('CV')
 #calculate ridge model
 
 rospy.init_node('CV')
