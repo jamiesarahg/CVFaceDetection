@@ -149,17 +149,3 @@ class Camera(object):
         cv2.waitKey(1)
         return
     time.sleep(1)
-
-
-
-  # def showVideo(self):
-  #   ret, frame = cam.read()
-  
-  #   # detects faces
-  #   faces = self.face_cascade.detectMultiScale(frame, scaleFactor=1.2, minSize=(20,20))
-  
-  #   #draws rectangle on face
-  #   for (x,y,w,h) in faces:
-  #     cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255))
-  #   cv2.imshow('frame',frame)
-  #   return faces

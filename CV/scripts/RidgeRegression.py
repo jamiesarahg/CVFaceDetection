@@ -25,23 +25,3 @@ class RidgeModel(DirManager):
         Y_train.append((x,y))
 
     return (X_train, Y_train)
-
-  # def ridge_predict(self, X_test):
-  #   """predicts a pitch and yaw from an input image
-  #   inputs: X_test - 24 by 24 image file of a face
-  #           ridge - ridge prediction model calibrated for this training set
-  #   outputs: yaw - predicted yaw of input image
-  #            pitch - predicted pitch of input image"""
-
-  #   prediction =  ridge.predict(X_test)
-  #   return prediction[0]
-
-  # def get_ridge_model(alpha):
-  #   """ creates a ridge model from the files saved in the directory folders
-  #   inputs: alpha - parameter in ridge model for controling precision
-  #   outputs: ridge - scikit learn ridge model"""
-
-  #   X_train, Y_train = get_training_data()
-  #   ridge = linear_model.Ridge(alpha=alpha)
-  #   ridge.fit(X_train, Y_train)
-  #   return ridge

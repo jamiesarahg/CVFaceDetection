@@ -58,42 +58,6 @@ class DataCollection(DirManager):
     del(self.ImManipulator.camera.cam)
     self.compressAll()
 
-  # def mkdirs(self):
-  #   """ creates directories in local storage if they don't already exist
-  #       input: width - screen of pong ball width
-  #              frameRate - how many pixels between each photo
-  #       returns: none """
-  #   try: #make an images directory
-  #     os.mkdir('images')
-  #   except OSError: #if it already exists
-  #     pass
-
-  #   i = 0
-  #   while i <=self.width:
-  #     #create folders for each yaw and pitch of the face
-  #     try:
-  #       os.mkdir('images/{0}_400'.format(i))
-  #       os.mkdir('images/400_{0}'.format(i))
-  #     except OSError:
-  #       pass
-  #     i += self.frameRate
-  # def startUp(self):
-  #   while True: #show video and mark detected faces
-  #     ret, frame = self.camera.read()
-  #     faces = self.ImManipulator.face_cascade.detectMultiScale(frame, scaleFactor=1.2, minSize=(20,20))
-  #     for (x,y,w,h) in faces:
-  #       #draws rectangle on face
-  #       cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255))
-  #     cv2.imshow('frame',frame)
-  #     #waits until user presses q to start
-  #     if cv2.waitKey(1) & 0xFF == ord('q'):
-  #       cv2.waitKey(1)
-  #       cv2.destroyWindow('frame')
-  #       cv2.destroyAllWindows()
-  #       cv2.waitKey(1)
-  #       return
-  #   time.sleep(1)
-
 
   def initializeScreen(self):
     """ starts screen for ball to be monitored on
@@ -125,21 +89,6 @@ class DataCollection(DirManager):
     pygame.draw.circle(self.screen, white, (x,y), 5)
     pygame.display.update()
     time.sleep(sleepTime)
-  
-  # def initializeCamera(self):
-  #   """ helper function to initialize camera
-  #   input - none
-  #   output - camera object"""
-
-  #   camera_port = 0
-  #   camera = cv2.VideoCapture(camera_port) 
-
-  #   #gets rid of first 10 seconds so that camera focuses
-  #   for i in xrange(10):
-  #     retval, im = camera.read()
-
-  #   return camera
-
 
   def intakeData(self):
     """ run function for intaking data
