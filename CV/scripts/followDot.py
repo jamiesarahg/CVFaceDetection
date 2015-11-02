@@ -218,7 +218,7 @@ def intakeData(camera, screen, width, height, frameRate):
 		_file = os.getcwd() + '/images/' + directory + '/' + str(timestamp) + '.png'
 		im = cv2.imread(_file)
 		if type(im) == np.ndarray:
-			newIm = compressImage(im, _file)
+			newIm = compressImage(im)
 			cv2.imwrite(_file, newIm)
 
 if __name__ == "__main__":

@@ -86,7 +86,7 @@ def get_face_recognition_model(X_train, Y_train):
   outputs: clf - SVC classifier
             pca - PCA algorithm"""
 
-  n_components = 20 # number of components of PCA
+  n_components = 100 # number of components of PCA
 
   #run a PCA on the training data
   pca = RandomizedPCA(n_components=n_components, whiten=True).fit(X_train)
@@ -106,6 +106,8 @@ def get_face_recognition_model(X_train, Y_train):
   param_grid = {'C': [1e3, 5e3, 1e4, 5e4, 1e5],
                 'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1], }
 
+  # param_grid = {'C': [1e3],#[1e3, 5e3, 1e4, 5e4, 1e5],
+  #               'gamma': [.0001],}
 
   print("Fitting the classifier to the training set")
   clf = GridSearchCV(SVC(kernel='rbf', class_weight='auto'), param_grid)
