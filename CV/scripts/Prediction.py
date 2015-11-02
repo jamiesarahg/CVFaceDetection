@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 import rospy
-from std_msgs.msg import *
-from geometry_msgs.msg import Twist, Vector3
+from visualization_msgs.msg import Marker
+from std_msgs.msg import Header, ColorRGBA
+from geometry_msgs.msg import Twist, Vector3, Point, Quaternion
 import cv2
 from ImageManipulation import ImageManipulation
 
@@ -21,10 +22,11 @@ class Predictor(object):
     self.previous12values =  ([0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]) #values to average
 
     #initialize publisher and twist for neato
-    self.pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
-    # self.pubYaw = rospy.Publisher('/yaw', String, queue_size=10)
-    # self.pubPitch = rospy.Publisher('/pitch', String, queue_size=10)
+    self.twistPub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+    self.markerPub = rospy.Publisher('/yaw_pitch', Marker, queue_size=10)
     self.twist = Twist()
+    self.marker = self.createMarker()
+    self.r = rospy.Rate(10)
 
   def avgList(self, listInput):
     """ helper function that finds average of a list
@@ -41,9 +43,11 @@ class Predictor(object):
     self.twist.angular.z = (currentYaw-400) * -0.005
     # Multiply by -1 to invert direction. Multiply by .001 to make much smaller. Add .8 to adjust range from -.8 -> 0  to 0->.8
     self.twist.linear.x = ((currentPitch) * -.001) + .8
-    # self.pub.publish(self.twist)
-    # self.pubYaw.publish(currentYaw)
-    self.pubPitch.publish(currentPitch)
+    
+    self.marker.pose.position = Point(x=currentYaw, y=currentPitch, z=0)
+    self.twistPub.publish(self.twist)
+    self.markerPub.publish(self.marker)
+    self.r.sleep()
 
   def updateAverage(self, currentYaw, currentPitch):
     """ updates the calculation of the moving average of Yaw and pitch
@@ -57,6 +61,17 @@ class Predictor(object):
     newYaw = self.avgList(self.previous12values[0])
     newPitch = self.avgList(self.previous12values[1])
     return newYaw, newPitch
+
+  def createMarker(self):
+    marker = Marker()
+    marker.header = Header(stamp=rospy.Time.now(), frame_id="odom")
+    marker.id = 1
+    marker.type = Marker.SPHERE
+    marker.action = Marker.ADD
+    marker.pose.orientation = Quaternion(x=0, y=0, z=0, w=1)
+    marker.scale = Vector3(x=.1, y=.1, z=.1)
+    marker.color = ColorRGBA(a=1, r=0, g=1, b=0)
+    return marker
 
   def run(self):
     """
@@ -74,7 +89,7 @@ class Predictor(object):
       # if no face detected, stop moving
       self.twist.angular.z = 0
       self.twist.linear.x = 0
-      self.pub.publish(self.twist)
+      self.twistPub.publish(self.twist)
 
 
     if cv2.waitKey(1) & 0xFF == ord('q'): #exit on q
