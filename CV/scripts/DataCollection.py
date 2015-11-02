@@ -31,7 +31,7 @@ class DirManager(object):
       i += self.frameRate
 
   def getDirFiles(self):
-    """ gets all files in the image directory
+    """ gets all files in the image directory and their labels
     returns: list of tuples (full file path, x coordinate, y coordinate)
     """
     files = []

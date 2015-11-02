@@ -63,7 +63,7 @@ class ImageManipulation(object):
       cv2.imwrite(_file, im)
   
   def detectFaces(self):
-    """ captures image displays rectangle around detected faces
+    """ captures image and displays rectangle around detected faces
         returns: frame: camera image 
     """
     ret, frame = self.camera.cam.read()

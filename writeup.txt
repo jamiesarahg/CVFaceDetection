@@ -8,10 +8,28 @@ Describe how your system works.  Make sure to include the basic components and a
 Our system is comprised of a laptop camera, which uses a face classifier to identify faces in the image. The face is then run through a model, which was determined from a data set using ridge regression. This model determines the yaw and pitch of the incoming image. This is then sent to the neato to control its motion.
 
 Describe a design decision you had to make when working on your project and what you ultimately did (and why)? These design decisions could be particular choices for how you implemented some part of an algorithm or perhaps a decision regarding which of two external packages to use in your project.
-How to intake data
+We spent a lot of time thinking about how train our model. We knew that we needed a dataset that could be used for supervised learning and that included a wide variety of faces and head orientations. We spent a lot of time thinking about everything from how to collect our data to what features to train on. Our solution to data collection was to use pygame to move a small dot around a black screen for about 30 seconds. We asked models to sit in front of the camera and follow the dot with their head. We tried to keep lighting consistent (with the model always facing the brightest light source) and assumed the the position of the dot closely represented the angle of the head. We captured 32 images of each model at regular intervals and automatically labeled them based on dot position. We then cropped the images to have square dimensions and include only the face, and averaged groups of pixels to create a compressed 24x24 image. We originally were going to use a 3 channel color image, but decided to convert to a 1 channel black and white image for a less complex training set.
+
 
 
 How did you structure your code?
+There were two main components to our program at a high level: handling the training data and the prediction data. 
+The class Predictor (from the script prediction) is the part of our code that should be run using rosrun. It runs prediction data through the ridge regression model, calculates a trailing average of prior predictions to reduce noise, converts the prediction to a robot speed, and publishes an update to the robot. 
+The class DataCollection (from the script DataCollection) handles the pygame dot screen update and is responsible for labelling and saving training data. 
+Both classes make heavy use of the class ImageManipulation (found in the script ImageManipulation) for capturing, displaying, saving, cropping, compressing, or otherwise manipulating images. The ImageManipulation class contains a Camera attribute, which is a small class that handles camera intialization and contains the face classifier. 
+DataCollection inherits from the class DirManager, a directory manager that handles our folder structure that labels the data. DirManager has a method to automatically generate the folder structure as well as a method to return all images and their labels in the directory. 
+
+
+
+We used the following classes in :
+
+ImageManipulation
+Camera
+DataCollection
+DirManager
+RidgeRegression
+Predictor
+
 
 What if any challenges did you face along the way?
 Face recognition was a challenge that we faced, since we took on a large challenge like that at a very late stage of the project. We were able to get it to work sometimes, but we would like to spend more time parameter turning and exploring with the different approaches. Due to time constraints, we had to pick one path to go down and do our best to implement it. Since neither of us have experience with facial recognition, it was a challenge, but I'm happy with the bit we were able to accomplish. From what we can tell there are a few problems with the methods that we used for facial recognition. Each person's face that we have data for is taken in the same light, have the same expression, and has the same make-up or hair-do. Finally, the camera is coming from the same angle! So, if any of these things change when the system tries to recognize the face later, then, it could easily be understood as the wrong person. In the future, if we were to be doing facial recognition, we would need a more distributed data set with these variables accounted for. So, as much as we want to attempt parameter tuning, the only way to make our facial recognition better would be to collect a larger, more varied data-set. Because of this, when we converted our code to object oriented, we did not include the facial recognition (mostly in deciding where time would be best spent). But, by running test_face_recognition.py, you can see the cross validated results of the facial recognition, and in the functional code of realTimePrediction.py, you can see the code for it to work in conjunction with the system.
