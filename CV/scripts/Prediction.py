@@ -13,7 +13,7 @@ import numpy as np
 class Predictor(object):
 
   def __init__(self):
-    # rospy.init_node('CV')
+    rospy.init_node('CV')
     self.ImManipulator = ImageManipulation()
     ridge = RidgeModel()
     self.ridge = ridge.ridge
@@ -24,9 +24,9 @@ class Predictor(object):
     self.previous12values =  ([0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0])
 
     #initialize publisher and twist for neato
-    # self.pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
-    # pubYaw = rospy.Publisher('/yaw', yaw, queue_size=10)
-    # pubPitch = rospy.Publisher('/pitch', pitch, queue_size=10)
+    self.pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+    # self.pubYaw = rospy.Publisher('/yaw', yaw, queue_size=10)
+    # self.pubPitch = rospy.Publisher('/pitch', pitch, queue_size=10)
     self.twist = Twist()
     print "initialized"
 
@@ -44,9 +44,14 @@ class Predictor(object):
                 currentYaw - average of previous 12 yaw readings
                 currentPitch - average of previous 12 pitch readings"""
 
-    self.twist.angular.z = 0#(currentYaw-400) * -0.005
-    self.twist.linear.x = (currentPitch-50) * -.001
-    # self.pub.publish(self.twist)
+    self.twist.angular.z = (currentYaw-400) * -0.005
+    # Multiply by -1 to invert direction. Multiply by .001 to make much smaller. Add .8 to adjust range from -.8 -> 0  to 0->.8
+    self.twist.linear.x = ((currentPitch) * -.001) + .8
+    # print self.twist.linear.x
+    # print ('pitch', currentPitch)
+    self.pub.publish(self.twist)
+    # self.pubYaw.publish(currentYaw)
+    # self.pubPitch.publish(currentPitch)
 
   def updateAverage(self, currentYaw, currentPitch):
     """ updates the calculation of the moving average of Yaw and pitch
@@ -87,9 +92,13 @@ class Predictor(object):
       newYaw, newPitch = self.updateAverage(yaw, pitch)
       self.sendToNeato(newYaw, newPitch)
     else:
-      self.sendToNeato(400, 50)
+      # if no face detected, stop
+      self.twist.angular.z = 0
+      self.twist.linear.x = 0
+      self.pub.publish(self.twist)
 
-    print self.twist
+
+    # print self.twist
     if cv2.waitKey(1) & 0xFF == ord('q'):
       # ready=True 
       cv2.waitKey(1)
