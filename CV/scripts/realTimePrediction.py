@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-"""DOCSTRING"""
 import rospy
 from geometry_msgs.msg import Twist, Vector3
 import cv2
@@ -24,12 +23,9 @@ def sendToNeato(pub, twist, currentYaw, currentPitch):
 							currentYaw - average of previous 12 yaw readings
 							currentPitch - average of previous 12 pitch readings"""
 
-	print currentYaw
-	print currentPitch
 
 	twist.angular.z = 0#(currentYaw-400) * -0.005
 	twist.linear.x = (currentPitch-50) * -.001
-	print twist
 	pub.publish(twist)
 
 def manipulateImage(im):
@@ -56,7 +52,6 @@ def updateAverage(previous12values, currentYaw, currentPitch):
 	previous12values[1].append(currentPitch)
 	newYaw = aveList(previous12values[0])
 	newPitch = aveList(previous12values[1])
-	print 'yaw', newYaw, 'pitch', newPitch
 	return previous12values, newYaw, newPitch
 
 def predit_face(faces, clf, pca):
@@ -76,8 +71,9 @@ def predit_face(faces, clf, pca):
 # rospy.init_node('CV')
 #calculate ridge model
 
-ridge, clf, pca = ridgeRegression.get_models()
+rospy.init_node('CV')
 
+ridge = ridgeRegression.get_ridge_model(.1)
 
 #initialize camera
 camera = followDot.initializeCamera()
@@ -104,10 +100,15 @@ raw_input()
 previous12values =  ([0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0])
 
 #initialize publisher and twist for neato
-# pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
-# twist = Twist()
+
+pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+# pubYaw = rospy.Publisher('/yaw', yaw, queue_size=10)
+# pubPitch = rospy.Publisher('/pitch', pitch, queue_size=10)
+twist = Twist()
 
 #enter run loop
+yaws = []
+pitches = []
 running = True
 while running == True:
 	#reads camera
@@ -125,17 +126,20 @@ while running == True:
 		cropped = followDot.cropImage(frame, faces)
 		reshaped = manipulateImage(cropped)    
 		yaw, pitch =  ridgeRegression.ridge_predict([reshaped],ridge)
+		yaws.append(yaw)
+		pitches.append(pitch)
+		plt.scatter(yaws, pitches)
 		previous12values, newYaw, newPitch = updateAverage(previous12values, yaw, pitch)
 		sendToNeato(pub, twist, newYaw, newPitch)
 
 	else: #When no face is detected, stop neato
-		print 'no face'
 		twist.angular.z = 0
 		twist.linear.x = 0
 		pub.publish(twist)
 
 	#show the camera with face detection square 
 	cv2.imshow('frame',frame)
+	# plt.show()
 	#waits until user presses q to start
 	if cv2.waitKey(1) & 0xFF == ord('q'):
 		ready=True 
