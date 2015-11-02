@@ -6,15 +6,15 @@ import numpy as np
 from ImageManipulation import ImageManipulation
 
 class DirManager(object):
+  """handles image directory
+  """
   def __init__(self, width=-1, frameRate=0):
-    self.width = width
-    self.frameRate = frameRate
+    self.width = width #screen width
+    self.frameRate = frameRate #pixels between photos
 
   def mkdirs(self):
-    """ creates directories in local storage if they don't already exist
-        input: width - screen of pong ball width
-               frameRate - how many pixels between each photo
-        returns: none """
+    """ creates directories to store images in local storage if they don't already exist
+    """
     try: #make an images directory
       os.mkdir('images')
     except OSError: #if it already exists
@@ -31,10 +31,9 @@ class DirManager(object):
       i += self.frameRate
 
   def getDirFiles(self):
-    '''
-    inputs: none
+    """ gets all files in the image directory
     returns: list of tuples (full file path, x coordinate, y coordinate)
-    '''
+    """
     files = []
     parentDir = os.getcwd() + '/images'
     for dirName in os.listdir(parentDir):
@@ -46,24 +45,24 @@ class DirManager(object):
     return files
 
 class DataCollection(DirManager):
+  """Move a pygame dot around a screen, take and save photos at various angles
+  """
   def __init__(self):
-    self.width = 800
-    self.height = 800
-    self.frameRate = 50
+    self.width = 800 #screen width
+    self.height = 800 #screen height
+    self.frameRate = 50 #pixels between photos
     self.mkdirs()
     self.ImManipulator = ImageManipulation()
-    self.ImManipulator.camera.showVideoOnStartUp()
+    self.ImManipulator.camera.showVideoOnStartUp() 
     self.screen  = self.initializeScreen()
-    self.intakeData()
-    del(self.ImManipulator.camera.cam)
-    self.compressAll()
+    self.intakeData() #collect data
+    del(self.ImManipulator.camera.cam) #clean up
+    self.compressAll() #compress images
 
 
   def initializeScreen(self):
     """ starts screen for ball to be monitored on
-        input: width - width of screen
-               height - height of screen
-        output: pygame screen """
+        returns : pygame screen """
 
     white = (255,255,255)
     black = (0,0,0)
@@ -77,9 +76,8 @@ class DataCollection(DirManager):
 
   def updateScreen(self, x, y):
     """updates location of ball on screen
-        inputs: x, y  - position of ball
-                screen - pygame screen 
-        outputs: none """
+      inputs: x, y  - position of ball
+    """
 
     white = (255,255,255)
     black = (0,0,0)
@@ -92,14 +90,9 @@ class DataCollection(DirManager):
 
   def intakeData(self):
     """ run function for intaking data
-        inputs: camera - camera data
-                width - width of pygame screen
-                height - height of pygame screen
-                frameRate - number of pixels that ball will move between image save
-        outputs: returns none, images get saved to local storage
-        """
+    """
 
-    self.timestamp = time.time()
+    self.timestamp = time.time() #arbitrary unique id
     x=self.width/2
     y=self.height/2
 
@@ -145,8 +138,10 @@ class DataCollection(DirManager):
         self.ImManipulator.getCameraImage('{0}_{1}/{2}'.format(x, y, self.timestamp))
       y+=1
 
-  #compressess all of the images saves over them in local storage
+  
   def compressAll(self):
+    """compressess all of the images saves over them in local storage
+    """
     for (_file, _, _) in self.getDirFiles():
       im = cv2.imread(_file)
       if type(im) == np.ndarray:

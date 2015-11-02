@@ -9,7 +9,7 @@ class ImageManipulation(object):
   def compressImage(self, im):
     """compresses Images to 24 by 24 pixel images
     input: im - image intakeData
-    output: compressed image """
+    returns: compressed image """
 
     squareSize = im.shape[0]/24 # number of pixels on 1 side of the square that will become an averaged pixel
     posY = 0
@@ -50,20 +50,22 @@ class ImageManipulation(object):
 
   def getCameraImage(self, name):
     """takes in image from camera, identifies face in the image and saves the image
-    inputs: camera - data from camera
-            name - filename
-    output: none"""
+    inputs: name - filename
+    """
 
-    retval, im = self.camera.cam.read() #take webcame photo
+    retval, im = self.camera.cam.read() #take webcam photo
     self.faces = self.camera.face_cascade.detectMultiScale(im, scaleFactor=1.2, minSize=(20,20)) #detect faces
     if self.faces!= (): #if faces are found
-      im = self.cropImage(im)
+      im = self.cropImage(im) #crop to face
 
       #save images
       _file = "images/" + name + ".png"
       cv2.imwrite(_file, im)
-
+  
   def detectFaces(self):
+    """ captures image displays rectangle around detected faces
+        returns: frame: camera image 
+    """
     ret, frame = self.camera.cam.read()
     self.faces = self.camera.face_cascade.detectMultiScale(frame, scaleFactor=1.2, minSize=(20,20))
     for (x,y,w,h) in self.faces:
@@ -73,9 +75,9 @@ class ImageManipulation(object):
     return frame
 
   def reshapeImage(self, im):
-    """ gray-scales and reshapes an image to first a 24x24 image, then a 576x1 asarray
+    """ gray-scales and reshapes an image to a 576x1 array
         inputs: im - image to be manipulated
-        outputs: reshaped - 576-item long arry which represents the grayscale values of the photo
+        returns: reshaped image
     """
 
     compressed = self.compressImage(im)
@@ -87,8 +89,7 @@ class ImageManipulation(object):
   def cropImage(self, im):
     """ crops image to be a square that includes only the face
         input:  im - the full image to crop
-            faces - list of detected faces in image
-        output: cropped image """
+        returns: cropped image """
 
     #choose largest detected face
     maxIndex, maxSize = [0, 0];
@@ -114,15 +115,16 @@ class ImageManipulation(object):
 
 
 class Camera(object):
+  """
+  takes photo and video
+  """
   def __init__(self):
     self.cam = self.initializeCamera()
     self.face_cascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml')
-    # self.showVideoOnStartUp()
   
   def initializeCamera(self):
     """ helper function to initialize camera
-    input - none
-    output - camera object"""
+    returns: camera object"""
 
     camera_port = 0
     camera = cv2.VideoCapture(camera_port) 
@@ -134,6 +136,9 @@ class Camera(object):
     return camera
 
   def showVideoOnStartUp(self):
+    """
+    show camera video and mark faces before starting data collection
+    """
     while True: #show video and mark detected faces
       ret, frame = self.cam.read()
       faces = self.face_cascade.detectMultiScale(frame, scaleFactor=1.2, minSize=(20,20))
@@ -141,7 +146,7 @@ class Camera(object):
         #draws rectangle on face
         cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255))
       cv2.imshow('frame',frame)
-      #waits until user presses q to start
+      #press q to exit
       if cv2.waitKey(1) & 0xFF == ord('q'):
         cv2.waitKey(1)
         cv2.destroyWindow('frame')

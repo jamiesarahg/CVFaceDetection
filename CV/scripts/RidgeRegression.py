@@ -5,15 +5,17 @@ import cv2
 
 
 class RidgeModel(DirManager):
+  """
+  aggregates the training data and fits a model to it
+  """
   def __init__(self, alpha=.1):
     self.X_train, self.Y_train = self.getTrainingData()
-    self.ridge = linear_model.Ridge(alpha=alpha)
-    self.ridge.fit(self.X_train, self.Y_train)
+    self.ridge = linear_model.Ridge(alpha=alpha) #make the model
+    self.ridge.fit(self.X_train, self.Y_train) #fit the model
 
   def getTrainingData(self):
     """Collect data from compressed images and convert to X_training and Y_training
-    inputs: none
-    outputs: X_train - training set for x values
+    returns: X_train - training set for x values
              Y_train - training set of y values """
     X_train = []
     Y_train = []
@@ -24,4 +26,4 @@ class RidgeModel(DirManager):
         X_train.append(reshaped)
         Y_train.append((x,y))
 
-    return (X_train, Y_train)
+    return (X_train, Y_train) #training data
