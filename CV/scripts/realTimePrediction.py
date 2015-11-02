@@ -24,8 +24,8 @@ def sendToNeato(pub, twist, currentYaw, currentPitch):
 							currentPitch - average of previous 12 pitch readings"""
 
 
-	twist.angular.z = 0#(currentYaw-400) * -0.005
-	twist.linear.x = (currentPitch-50) * -.001
+	twist.angular.z = (currentYaw-400) * -0.005
+	twist.linear.x = (currentPitch * -.001) +.8
 	pub.publish(twist)
 
 def manipulateImage(im):
