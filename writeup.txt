@@ -1,6 +1,8 @@
 Writeup for CV Project
 Jamie Gorson and Nicole Rifkin
 
+Video can be found here: https://www.youtube.com/watch?v=S-CmvTUCd8c
+
 What was the goal of your project?
 The goal of our project was to control a neato with facial recognition. Our program would track the yaw and pitch of our face in order to determine the speed and direction of the neato. 
 
